@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Canvas Chronicles</title>
+
+    <!-- zimjs.com - JavaScript Canvas Framework -->
+    <script type="module">
+      import zim from "https://zimjs.org/cdn/015/zim";
+
+      // See Docs under Frame for FIT, FILL, FULL, and TAG
+
+      const assets = [
+        "BGintro4.jpg",
+        "1.png",
+        "2.png",
+        "3.png",
+        "4.png",
+        "5.png",
+        "6.png",
+        "7.png",
+        "8.png",
+        "9.png",
+        "10.png",
+        "11.png",
+        "12.png",
+        "scroll.png",
+        "welcome.mp3",
+
+        "DaVinci1.png",
+        "DaVinci2.png",
+        "DaVinci3.png",
+
+        "Rembrandt1.png",
+        "Rembrandt2.png",
+        "Rembrandt3.png",
+
+        "Michelangelo1.png",
+        "Michelangelo2.png",
+        "Michelangelo3.png",
+
+        "Monet1.png",
+        "Monet2.png",
+        "Monet3.png",
+
+        "VanGogh1.png",
+        "VanGogh2.png",
+        "VanGogh3.png",
+
+        "vignette.png",
+        "bubblegum.png",
+        "vintage.png",
+        "nightBlues.png",
+
+        "startButton.png",
+        "saveButton.png",
+        "E1.png",
+        "E2.png",
+        "E3.png",
+        "E4.png",
+        "E5.png",
+        "E6.png",
+        "E7.png",
+        "E8.png",
+        "E9.png",
+        "E10.png",
+        "https://fonts.googleapis.com/css2?family=Dancing+Script",
+        "https://fonts.googleapis.com/css2?family=Love+Ya+Like+A+Sister",
+      ];
+
+      const path = "Assets/";
+
+      //ANIMATE = false;
+
+      //NOTE: upload landscape images preferably of 1024, 768
+
+      new Frame(FIT, 1024, 768, light, dark, ready, assets, path);
+
+      let AllContainer;
+      let back;
+      let artFlipper;
+
+      function ready() {
+        // given F (Frame), S (Stage), W (width), H (height)
+        // put code here
+        function part0() {
+          new Pic("12.png").center();
+          const scroll = new Pic("scroll1.png")
+            .sca(0.5)
+            .pos(325, 0, LEFT, CENTER);
+          const start = new Pic("startButton.png")
+            .sca(0.5)
+            .pos(0, 300, CENTER, BOTTOM)
+            .tap(() => {
+              new Aud("click.wav").play();
+              part1();
+            });
+          const parallax = new Parallax([
+            { obj: scroll, prop: "y", propChange: 50, input: "mouseY" },
+            { obj: start, prop: "x", propChange: 20 },
+          ]);
+        }
+        part0();
+
+        function part1() {
+          zogr("part1 is running");
+          const sound = new Aud("welcome.mp3").play();
+
+          STYLE = { font: "Dancing Script", size: 70 };
+          new Pic("BGintro4.jpg")
+            .centerReg()
+            .sca(0.7)
+            .rot(200)
+            .animate({
+              props: { rotation: 60 },
+              time: 9,
+            });
+          new Pic("9.png").centerReg().sca(1).ble("saturation");
+
+          const pane = new Pane({
+            content: "Canvas Chronicles",
+            backgroundColor: "white",
+            color: "black",
+            width: 600,
+            height: 200,
+            corner: [0, 100, 0, 100],
+          })
+            .show()
+            .animate({
+              props: { alpha: 0 },
+              time: 5,
+              wait: 9,
+              from: true,
+              call: part2,
+            });
+        }
+
+        function part2() {
+          zogp("part2 is running");
+
+          new Pic("4.png")
+            .centerReg()
+            .sca(1)
+            .animate({
+              props: { alpha: 0 },
+              time: 0.2,
+              from: true,
+            });
+
+          new Label({
+            text: "THEME",
+            size: 30,
+            font: "Love ya like A sister",
+            color: black,
+            backgroundColor: white,
+          })
+            .pos(50, -50, LEFT, TOP)
+            .animate({
+              props: { y: 60 },
+              time: 1.2,
+              wait: 1.6,
+              ease: "backOut",
+            });
+
+          new Label({
+            text: "YOUR CANVAS",
+            size: 30,
+            font: "Love ya like A sister",
+            color: black,
+            backgroundColor: white,
+          })
+            .pos(280, -50, RIGHT, TOP)
+            .animate({
+              props: { y: 60 },
+              time: 1.2,
+              wait: 1.6,
+              ease: "backOut",
+            });
+
+          //CONTAINER , LOADER , SAVE BUTTON , FLIPPER , EMITTER , CALL PART 2
+
+          AllContainer = new Container(W, H).addTo();
+          const frameContainer = new Container(W, H).addTo(AllContainer);
+          const filterContainer = new Container(W, H).addTo(AllContainer);
+
+          const loader = new Loader({
+            label: "Upload or drop an image",
+            width: 1024,
+            height: 768,
+            bgColor: white,
+            borderColor: black,
+            color: black,
+          })
+            .sca(0.7)
+            .pos(20, 100, RIGHT, BOTTOM)
+            .animate({
+              props: { alpha: 0 },
+              time: 0.2,
+              from: true,
+            });
+
+          loader.on("loaded", (e) => {
+            zog("IMAGEloaded");
+            const pic = e.bitmap;
+            pic.scaleTo(S, 70, 70).pos(20, 100, RIGHT, BOTTOM, AllContainer);
+            loader.removeFrom();
+            S.update();
+          });
+          back = new Rectangle(W, H);
+          const button = new Pic("saveButton.png")
+            .sca(0.3)
+            .alp(0)
+            .animate({ alpha: 1 })
+            .pos(20, 40, RIGHT, BOTTOM)
+            .tap(() => {
+              new Aud("click.wav").play();
+              new Label({
+                text: "Tap on your masterpiece to create another one",
+                size: 20,
+                font: "Love ya like A sister",
+                color: black,
+                backgroundColor: white,
+              })
+                .pos(160, 40, RIGHT, BOTTOM)
+                .top();
+              artFlipper = new Flipper(AllContainer, back).center();
+              loader.save(AllContainer);
+
+              artFlipper.on("flipped", () => {
+                new Aud("click.wav").play();
+                new Pic("14.png")
+                  .sca(1.6)
+                  .centerReg()
+                  .rot(200)
+                  .animate({
+                    props: { rotation: 60 },
+                    time: 9,
+                    call: part2,
+                  });
+                const particles = new Emitter({
+                  obj: [
+                    new Pic("E1.png"),
+                    new Pic("E2.png"),
+                    new Pic("E3.png"),
+                    new Pic("E4.png"),
+                    new Pic("E5.png"),
+                    new Pic("E6.png"),
+                    new Pic("E7.png"),
+                    new Pic("E8.png"),
+                    new Pic("E9.png"),
+                    new Pic("E10.png"),
+                  ],
+
+                  interval: 0.4,
+                }).centerReg();
+                new Label({
+                  text: "Your artistic journey continues to unfold....",
+                  size: 40,
+                  font: "Dancing Script",
+                  color: black,
+                  backgroundColor: white,
+                  corner: [0, 40, 0, 40],
+                }).centerReg();
+              });
+            });
+
+          //BUTTONS AND FRAMES AND FILTERS
+          //BUTTON CREATE
+
+          const DaVinciButton = new Label({
+            text: "Da Vinci",
+            size: 35,
+            font: "Dancing Script",
+            color: "black",
+            rollColor: "brown",
+            backgroundColor: "white",
+            corner: [0, 30, 0, 0],
+          })
+            .pos(20, -50, LEFT, TOP)
+            .animate({
+              props: { y: 150 },
+              time: 1,
+              wait: 1.2,
+              ease: "backOut",
+            });
+
+          const DaVinci = series(
+            new Pic("DaVinci1.png"),
+            new Pic("DaVinci2.png"),
+            new Pic("DaVinci3.png")
+          );
+
+          const RembrandtButton = new Label({
+            text: "Rembrandt",
+            size: 35,
+            font: "Dancing Script",
+            color: "black",
+            rollColor: "brown",
+            backgroundColor: "white",
+            corner: [0, 30, 0, 0],
+          })
+            .pos(20, -50, LEFT, TOP)
+            .animate({
+              props: { y: 250 },
+              time: 1,
+              wait: 0.9,
+              ease: "backOut",
+            });
+
+          const Rembrandt = series(
+            new Pic("Rembrandt1.png"),
+            new Pic("Rembrandt2.png"),
+            new Pic("Rembrandt3.png")
+          );
+
+          const MichelangeloButton = new Label({
+            text: "Michael Angelo",
+            size: 35,
+            font: "Dancing Script",
+            color: "black",
+            rollColor: "brown",
+            backgroundColor: "white",
+            corner: [0, 30, 0, 0],
+          })
+            .pos(20, -50, LEFT, TOP)
+            .animate({
+              props: { y: 350 },
+              time: 1,
+              wait: 0.6,
+              ease: "backOut",
+            });
+
+          const Michelangelo = series(
+            new Pic("Michelangelo1.png"),
+            new Pic("Michelangelo2.png"),
+            new Pic("Michelangelo3.png")
+          );
+
+          const monetButton = new Label({
+            text: "Claude Monet",
+            size: 35,
+            font: "Dancing Script",
+            color: "black",
+            rollColor: "brown",
+            backgroundColor: "white",
+            corner: [0, 30, 0, 0],
+          })
+            .pos(20, -50, LEFT, TOP)
+            .animate({
+              props: { y: 450 },
+              time: 1,
+              wait: 0.3,
+              ease: "backOut",
+            });
+
+          const monet = series(
+            new Pic("Monet1.png"),
+            new Pic("Monet2.png"),
+            new Pic("Monet3.png")
+          );
+
+          const VanGoghButton = new Label({
+            text: "Van Gogh",
+            size: 35,
+            font: "Dancing Script",
+            color: "black",
+            rollColor: "brown",
+            backgroundColor: "white",
+            corner: [0, 30, 0, 0],
+          })
+            .pos(20, -50, LEFT, TOP)
+            .animate({
+              props: { y: 550 },
+              time: 1,
+              ease: "backOut",
+            });
+
+          const VanGogh = series(
+            new Pic("VanGogh1.png"),
+            new Pic("VanGogh2.png"),
+            new Pic("VanGogh3.png")
+          );
+
+          //FILTER1
+          const vignetteButton = new Circle(20, grey, white, 5).pos(
+            20,
+            50,
+            LEFT,
+            BOTTOM
+          );
+
+          const vignette = new Pic("vignette.png");
+
+          vignetteButton.on("click", () => {
+            new Aud("click.wav").play();
+            filterContainer.top();
+            filterContainer.removeAllChildren();
+            vignette
+              .scaleTo(S, 70, 70)
+              .pos(20, 100, RIGHT, BOTTOM, filterContainer);
+            S.update();
+          });
+          //FILTER2
+          const bubblegumButton = new Circle(20, pink, white, 5).pos(
+            80,
+            50,
+            LEFT,
+            BOTTOM
+          );
+
+          const bubblegum = new Pic("bubblegum.png");
+
+          bubblegumButton.on("click", () => {
+            new Aud("click.wav").play();
+            filterContainer.top();
+            filterContainer.removeAllChildren();
+            bubblegum
+              .scaleTo(S, 70, 70)
+              .pos(20, 100, RIGHT, BOTTOM, filterContainer);
+            S.update();
+          });
+
+          //FILTER3
+          const vintageButton = new Circle(20, brown, white, 5).pos(
+            140,
+            50,
+            LEFT,
+            BOTTOM
+          );
+
+          const vintage = new Pic("vintage.png");
+
+          vintageButton.on("click", () => {
+            new Aud("click.wav").play();
+            filterContainer.top();
+            filterContainer.removeAllChildren();
+            vintage
+              .scaleTo(S, 70, 70)
+              .pos(20, 100, RIGHT, BOTTOM, filterContainer);
+            S.update();
+          });
+
+          //FILTER4
+          const nightBluesButton = new Circle(20, blue, white, 5).pos(
+            200,
+            50,
+            LEFT,
+            BOTTOM
+          );
+
+          const nightBlues = new Pic("nightBlues.png").alp(0.8);
+
+          nightBluesButton.on("click", () => {
+            new Aud("click.wav").play();
+            filterContainer.top();
+            filterContainer.removeAllChildren();
+            nightBlues
+              .scaleTo(S, 70, 70)
+              .pos(20, 100, RIGHT, BOTTOM, filterContainer);
+            S.update();
+          });
+
+          //BUTTON CLICKS
+          DaVinciButton.on("click", () => {
+            new Aud("click.wav").play();
+            frameContainer.top();
+            frameContainer.removeAllChildren();
+            DaVinci()
+              .scaleTo(S, 70, 70)
+              .pos(20, 100, RIGHT, BOTTOM, frameContainer);
+            S.update();
+          });
+
+          RembrandtButton.on("click", () => {
+            new Aud("click.wav").play();
+            frameContainer.top();
+            frameContainer.removeAllChildren();
+            Rembrandt()
+              .scaleTo(S, 70, 70)
+              .pos(20, 100, RIGHT, BOTTOM, frameContainer);
+            S.update();
+          });
+
+          MichelangeloButton.on("click", () => {
+            new Aud("click.wav").play();
+            frameContainer.top();
+            frameContainer.removeAllChildren();
+            Michelangelo()
+              .scaleTo(S, 70, 70)
+              .pos(20, 100, RIGHT, BOTTOM, frameContainer);
+            S.update();
+          });
+
+          monetButton.on("click", () => {
+            new Aud("click.wav").play();
+            frameContainer.top();
+            frameContainer.removeAllChildren();
+            monet()
+              .scaleTo(S, 70, 70)
+              .pos(20, 100, RIGHT, BOTTOM, frameContainer);
+            S.update();
+          });
+
+          VanGoghButton.on("click", () => {
+            new Aud("click.wav").play();
+            frameContainer.top();
+            frameContainer.removeAllChildren();
+            VanGogh()
+              .scaleTo(S, 70, 70)
+              .pos(20, 100, RIGHT, BOTTOM, frameContainer);
+            S.update();
+          });
+        }
+      }
+      // end ready
+    </script>
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+  </head>
+  <body></body>
+</html>
